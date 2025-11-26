@@ -195,6 +195,12 @@ function enviarAGmail(event) {
     const juegosPS2 = document.getElementById('juegosPS2').value;
     const mensaje = document.getElementById('mensaje').value;
     
+    // Validar campos requeridos
+    if (!nombre || !apellido || !telefono || !email) {
+        alert('❌ Por favor completa todos los campos requeridos');
+        return;
+    }
+    
     // Obtener carrito
     const carrito = obtenerDatosCarrito();
     
@@ -233,8 +239,22 @@ function enviarAGmail(event) {
     cuerpoMensaje += `📅 Fecha: ${new Date().toLocaleString('es-PY')}\n`;
     cuerpoMensaje += `🌐 Página: ${window.location.href}`;
     
+    // Mostrar mensaje de confirmación
+    const confirmarEnvio = confirm(
+        '📧 ¿ABRIR GMAIL PARA ENVIAR EL PEDIDO?\n\n' +
+        'Se abrirá tu Gmail con todos los datos del pedido.\n\n' +
+        '• Solo haz clic en "ENVIAR"\n' +
+        '• Tu pedido llegará directamente\n' +
+        '• Te contactaremos en el día\n\n' +
+        '¿Continuar?'
+    );
+    
+    if (!confirmarEnvio) {
+        return; // El usuario canceló
+    }
+    
     // Enviar por Gmail
-    const emailDestino = 'betalabgamespedidos@gmail.com'; // CAMBIA POR TU GMAIL
+    const emailDestino = 'betalabgamespy@gmail.com'; // CAMBIA POR TU GMAIL
     const asunto = carrito.length > 0 ? 
         `🎮 PEDIDO CARRITO - ${nombre} ${apellido}` : 
         `🎮 PEDIDO PS2 - ${nombre} ${apellido}`;
@@ -244,8 +264,10 @@ function enviarAGmail(event) {
     // Mostrar mensaje de éxito
     document.getElementById('mensajeExito').style.display = 'block';
     
-    // Abrir cliente de correo
-    window.location.href = mailtoLink;
+    // Abrir cliente de correo después de un breve delay
+    setTimeout(() => {
+        window.location.href = mailtoLink;
+    }, 500);
     
     // Vaciar carrito si era un pedido desde carrito
     if (carrito.length > 0) {
@@ -270,3 +292,4 @@ window.obtenerDatosCarrito = obtenerDatosCarrito;
 window.mostrarResumenCarrito = mostrarResumenCarrito;
 
 console.log('✅ formulariops2.js cargado - ENVÍO A GMAIL CONFIGURADO');
+
