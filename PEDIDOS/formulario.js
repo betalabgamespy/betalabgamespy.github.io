@@ -28,34 +28,27 @@ function vaciarCarrito() {
     alert('✅ Carrito vaciado correctamente');
 }
 
-// FUNCIÓN CORREGIDA para formatear números - SOLUCIÓN DEFINITIVA
+// FUNCIÓN CORREGIDA para formatear números
 function formatearNumeroConCeros(numero) {
     console.log('🔢 Formateando número:', numero);
     
-    // Si el número es 0, mostrar 0
     if (numero === 0) return '0';
     
-    // Para números enteros, agregar .000
     if (Number.isInteger(numero) && numero < 1000) {
         return numero + '.000';
     }
     
-    // Para números mayores, formatear con puntos y agregar .000 si es necesario
     let numeroString = numero.toString();
     
-    // Si no tiene decimales y es menor a 1.000.000, agregar .000
     if (!numeroString.includes('.') && numero < 1000000) {
-        // Dividir en parte entera y verificar
         const partes = numeroString.split('.');
         const parteEntera = partes[0];
         
-        // Si la parte entera es menor a 1000, agregar .000
         if (parseInt(parteEntera) < 1000) {
             return numero + '.000';
         }
     }
     
-    // Formatear normalmente con separadores de miles
     return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
@@ -64,30 +57,18 @@ function calcularPrecios(item) {
     console.log('💰 Calculando precios para:', item);
     
     let precioString = item.precio ? item.precio.toString() : '0';
-    console.log('🔢 Precio string original:', precioString);
     
-    // Limpiar el precio - método más robusto
     precioString = precioString
         .replace(/\s?Gs\s?/g, '')
         .replace(/\$/g, '')
-        .replace(/\./g, '') // Eliminar puntos para cálculo
+        .replace(/\./g, '')
         .trim();
     
-    console.log('🔢 Precio string limpio:', precioString);
-    
-    // Convertir a número
     const precioNumerico = parseFloat(precioString) || 0;
     const subtotalNumerico = precioNumerico * item.cantidad;
     
-    console.log('🔢 Precio numérico:', precioNumerico);
-    console.log('🔢 Cantidad:', item.cantidad);
-    console.log('🔢 Subtotal numérico:', subtotalNumerico);
-    
-    // Formatear con la nueva función
     const precioMostrar = formatearNumeroConCeros(precioNumerico) + ' Gs';
     const subtotalMostrar = formatearNumeroConCeros(subtotalNumerico) + ' Gs';
-    
-    console.log('💰 Resultado - Precio:', precioMostrar, 'Subtotal:', subtotalMostrar);
     
     return {
         precioMostrar: precioMostrar,
@@ -95,7 +76,7 @@ function calcularPrecios(item) {
     };
 }
 
-// Función para mostrar el resumen del carrito - VERSIÓN CORREGIDA
+// Función para mostrar el resumen del carrito
 function mostrarResumenCarrito(carrito) {
     console.log('🛍️ Mostrando resumen del carrito:', carrito);
     
@@ -122,13 +103,11 @@ function mostrarResumenCarrito(carrito) {
         return;
     }
     
-    // Si hay productos en el carrito
     const totalJuegos = carrito.reduce((sum, item) => sum + item.cantidad, 0);
     if (tituloElement) {
         tituloElement.textContent = `Pedido de ${totalJuegos} juego(s)`;
     }
     
-    // Crear HTML del resumen
     let htmlResumen = '<div class="resumen-pedido">';
     htmlResumen += '<h4>📋 Detalles de tu pedido:</h4>';
     htmlResumen += '<div class="lista-juegos">';
@@ -167,15 +146,13 @@ function mostrarResumenCarrito(carrito) {
     }
 }
 
-// FUNCIÓN CORREGIDA para calcular total del carrito
+// FUNCIÓN para calcular total del carrito
 function calcularTotalCarrito(carrito) {
     let total = 0;
-    console.log('🔢 Calculando TOTAL del carrito');
     
     carrito.forEach(item => {
         let precioString = item.precio ? item.precio.toString() : '0';
         
-        // Limpiar el precio igual que en calcularPrecios
         precioString = precioString
             .replace(/\s?Gs\s?/g, '')
             .replace(/\$/g, '')
@@ -185,18 +162,164 @@ function calcularTotalCarrito(carrito) {
         const precioNumerico = parseFloat(precioString) || 0;
         const subtotal = precioNumerico * item.cantidad;
         
-        console.log(`   ${item.nombre}: ${precioNumerico} x ${item.cantidad} = ${subtotal}`);
-        
         total += subtotal;
     });
     
-    console.log(`💰 TOTAL FINAL: ${total}`);
     return total;
+}
+
+// FUNCIÓN PARA ENVIAR EL FORMULARIO POR CORREO SIMPLE
+function enviarFormulario(event) {
+    event.preventDefault(); // Prevenir recarga de página
+    console.log('📤 Iniciando envío de formulario...');
+
+    // Obtener datos del formulario
+    const nombre = document.getElementById('nombre')?.value || 'No proporcionado';
+    const apellido = document.getElementById('apellido')?.value || 'No proporcionado';
+    const email = document.getElementById('email')?.value || 'No proporcionado';
+    const telefono = document.getElementById('telefono')?.value || 'No proporcionado';
+    const direccion = document.getElementById('direccion')?.value || 'No proporcionado';
+    const ciudad = document.getElementById('ciudad')?.value || 'No proporcionado';
+    const metodoPago = document.getElementById('metodo-pago')?.value || 'No especificado';
+    const comprobante = document.getElementById('comprobante')?.files.length > 0 ? 'Sí adjuntó comprobante' : 'No adjuntó comprobante';
+
+    // Obtener datos del carrito
+    const carrito = obtenerDatosCarrito();
+    const total = calcularTotalCarrito(carrito);
+    const totalFormateado = formatearNumeroConCeros(total) + ' Gs';
+
+    // Crear contenido del correo
+    const contenidoCorreo = crearContenidoCorreo({
+        nombre, apellido, email, telefono, direccion, ciudad, metodoPago, comprobante
+    }, carrito, totalFormateado);
+
+    // Enviar por correo simple
+    enviarCorreoSimple(contenidoCorreo, { nombre, apellido });
+}
+
+// FUNCIÓN PARA CREAR EL CONTENIDO DEL CORREO
+function crearContenidoCorreo(datos, carrito, total) {
+    let contenido = `
+NUEVO PEDIDO - BETALAB GAMES PY
+════════════════════════════════
+
+📋 INFORMACIÓN DEL CLIENTE:
+────────────────────────────
+👤 Nombre: ${datos.nombre} ${datos.apellido}
+📧 Email: ${datos.email}
+📞 Teléfono: ${datos.telefono}
+📍 Dirección: ${datos.direccion}
+🏙️ Ciudad: ${datos.ciudad}
+💳 Método de pago: ${datos.metodoPago}
+🧾 Comprobante: ${datos.comprobante}
+
+🛒 DETALLES DEL PEDIDO:
+────────────────────────────
+`;
+
+    if (carrito.length === 0) {
+        contenido += '❌ Carrito vacío\n';
+    } else {
+        carrito.forEach((item, index) => {
+            const precios = calcularPrecios(item);
+            contenido += `🎮 ${index + 1}. ${item.nombre}\n`;
+            contenido += `   Cantidad: ${item.cantidad} x ${precios.precioMostrar}\n`;
+            contenido += `   Subtotal: ${precios.subtotalMostrar}\n\n`;
+        });
+    }
+
+    contenido += `
+────────────────────────────
+💰 TOTAL DEL PEDIDO: ${total}
+────────────────────────────
+🕒 Fecha: ${new Date().toLocaleString('es-PY')}
+📦 BETALAB GAMES PY
+    `;
+
+    return contenido;
+}
+
+// FUNCIÓN CORREO SIMPLE - Abre el cliente de correo
+function enviarCorreoSimple(contenido, datos) {
+    const emailDestino = 'betalabgamespy@gmail.com'; // Cambia por tu email
+    const subject = `🎮 NUEVO PEDIDO - ${datos.nombre} ${datos.apellido}`;
+    
+    const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(contenido)}`;
+    
+    console.log('📧 Abriendo cliente de correo...');
+    console.log('Asunto:', subject);
+    console.log('Contenido:', contenido);
+    
+    // Abrir cliente de correo
+    window.location.href = mailtoLink;
+    
+    // Mostrar mensaje de éxito después de un tiempo
+    setTimeout(() => {
+        const confirmacion = confirm(
+            '✅ Pedido preparado para enviar.\n\n' +
+            'Se abrió tu cliente de correo. ¿Ya enviaste el correo?\n\n' +
+            'Si no se abrió el correo, por favor envía manualmente a:\n' +
+            'betalabgamespy@gmail.com\n\n' +
+            '¿Quieres vaciar el carrito?'
+        );
+        
+        if (confirmacion) {
+            vaciarCarrito();
+        }
+    }, 2000);
+}
+
+// FUNCIÓN PARA MANEJAR EL ENVÍO DEL FORMULARIO
+function manejarEnvioPedido(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    
+    // Verificar que el carrito no esté vacío
+    const carrito = obtenerDatosCarrito();
+    if (carrito.length === 0) {
+        alert('❌ El carrito está vacío. Agrega juegos antes de enviar el pedido.');
+        return;
+    }
+    
+    // Verificar datos mínimos del formulario
+    const nombre = document.getElementById('nombre')?.value;
+    const telefono = document.getElementById('telefono')?.value;
+    
+    if (!nombre || !telefono) {
+        alert('❌ Por favor completa al menos tu nombre y teléfono antes de enviar el pedido.');
+        return;
+    }
+    
+    // Enviar formulario
+    enviarFormulario(event);
+}
+
+// FUNCIÓN PARA MOSTRAR VISTA PREVIA DEL PEDIDO
+function mostrarVistaPrevia() {
+    const carrito = obtenerDatosCarrito();
+    const total = calcularTotalCarrito(carrito);
+    const totalFormateado = formatearNumeroConCeros(total) + ' Gs';
+    
+    let mensaje = '📋 VISTA PREVIA DEL PEDIDO:\n\n';
+    
+    if (carrito.length === 0) {
+        mensaje += '❌ Carrito vacío';
+    } else {
+        carrito.forEach((item, index) => {
+            const precios = calcularPrecios(item);
+            mensaje += `🎮 ${item.nombre}\n`;
+            mensaje += `   ${item.cantidad} x ${precios.precioMostrar}\n`;
+        });
+        mensaje += `\n💰 TOTAL: ${totalFormateado}`;
+    }
+    
+    alert(mensaje);
 }
 
 // Al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Página cargada - Iniciando carrito...');
+    console.log('🚀 Página de pedidos cargada - Iniciando...');
     
     // Obtener carrito
     carrito = obtenerDatosCarrito();
@@ -205,25 +328,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar resumen
     mostrarResumenCarrito(carrito);
     
-    // Actualizar monto
+    // Actualizar monto de transferencia
     const total = calcularTotalCarrito(carrito);
     actualizarMontoTransferencia(formatearNumeroConCeros(total) + ' Gs');
     
-    // Agregar event listener global como backup
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'btnVaciarCarrito') {
-            vaciarCarrito();
+    // Agregar event listener al formulario
+    const formularioPedido = document.getElementById('formulario-pedido');
+    if (formularioPedido) {
+        formularioPedido.addEventListener('submit', manejarEnvioPedido);
+        console.log('✅ Event listener agregado al formulario');
+    }
+    
+    // Agregar botón de vista previa si no existe
+    if (!document.getElementById('btnVistaPrevia')) {
+        const btnVistaPrevia = document.createElement('button');
+        btnVistaPrevia.id = 'btnVistaPrevia';
+        btnVistaPrevia.type = 'button';
+        btnVistaPrevia.className = 'btn-vista-previa';
+        btnVistaPrevia.textContent = '👁️ Vista Previa del Pedido';
+        btnVistaPrevia.onclick = mostrarVistaPrevia;
+        
+        const formulario = document.getElementById('formulario-pedido');
+        if (formulario) {
+            formulario.appendChild(btnVistaPrevia);
         }
-    });
+    }
 });
-
-// Función para debug
-function debugCarritoCompleto() {
-    console.log('=== 🐛 DEBUG COMPLETO DEL CARRITO ===');
-    console.log('sessionStorage carrito:', sessionStorage.getItem('carrito'));
-    console.log('Variable global carrito:', carrito);
-    console.log('Botón vaciar en DOM:', document.getElementById('btnVaciarCarrito'));
-}
 
 function crearContenedorResumen() {
     const contenedor = document.createElement('div');
@@ -247,7 +377,11 @@ function actualizarMontoTransferencia(precio) {
 
 // Hacer funciones globales
 window.vaciarCarrito = vaciarCarrito;
-window.debugCarritoCompleto = debugCarritoCompleto;
-window.mostrarResumenCarrito = mostrarResumenCarrito;
+window.manejarEnvioPedido = manejarEnvioPedido;
+window.mostrarVistaPrevia = mostrarVistaPrevia;
+window.enviarFormulario = enviarFormulario;
 
-console.log('✅ pedido.js cargado - Funciones disponibles:');
+console.log('✅ pedidos.js cargado - Funciones disponibles:');
+console.log('- vaciarCarrito()');
+console.log('- manejarEnvioPedido()');
+console.log('- mostrarVistaPrevia()');
