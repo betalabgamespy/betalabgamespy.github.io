@@ -87,11 +87,11 @@ function irAlCarrito() {
     // Si estamos en una página de PS2, ir al formulario de PS2
     if (currentPage.includes('ps2') || currentPage.includes('PS2') || 
         currentPage.includes('playstation') || currentPage.includes('PlayStation')) {
-        window.location.href = 'PEDIDOS/pedidosps2.html';
+        window.location.href = '/PEDIDOS/pedidosps2.html';
     } 
     // Si estamos en la página principal o otras páginas, ir al formulario general
     else {
-        window.location.href = 'PEDIDOS/pedidos.html';
+        window.location.href = '/PEDIDOS/pedidos.html';
     }
 }
 

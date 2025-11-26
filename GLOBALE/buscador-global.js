@@ -9,20 +9,20 @@ class BuscadorGlobal {
         // Base de datos global de productos (puedes expandirla)
         this.productosGlobales = [
             // PlayStation 2
-            { texto: "Pendrive con 4 juegos para PS2", url: "PLAYSTATION%202/playstation%202.html", consola: "PS2" },
-            { texto: "Pendrive con 8 juegos para PS2", url: "PLAYSTATION%202/playstation%202.html", consola: "PS2" },
-            { texto: "Pendrive con 14 juegos para PS2", url: "PLAYSTATION%202/playstation%202.html", consola: "PS2" },
-            { texto: "Pendrive con 20 juegos para PS2", url: "PLAYSTATION%202/playstation%202.html", consola: "PS2" },
+            { texto: "Pendrive con 4 juegos para PS2", url: "/PLAYSTATION%202/playstation%202.html", consola: "PS2" },
+            { texto: "Pendrive con 8 juegos para PS2", url: "/PLAYSTATION%202/playstation%202.html", consola: "PS2" },
+            { texto: "Pendrive con 14 juegos para PS2", url: "/PLAYSTATION%202/playstation%202.html", consola: "PS2" },
+            { texto: "Pendrive con 20 juegos para PS2", url: "/PLAYSTATION%202/playstation%202.html", consola: "PS2" },
             
             // PlayStation 3
-            { texto: "Juego PS3 - The Last of Us", url: "PLAYSTATION%203/playstation%203_1.html", consola: "PS3" },
-            { texto: "Juego PS3 - God of War III", url: "PLAYSTATION%203/playstation%203_1.html", consola: "PS3" },
-            { texto: "Juego PS3 - Uncharted 3", url: "PLAYSTATION%203/playstation%203_1.html", consola: "PS3" },
+            { texto: "Juego PS3 - The Last of Us", url: "/PLAYSTATION%203/playstation%203_1.html", consola: "PS3" },
+            { texto: "Juego PS3 - God of War III", url: "/PLAYSTATION%203/playstation%203_1.html", consola: "PS3" },
+            { texto: "Juego PS3 - Uncharted 3", url: "/PLAYSTATION%203/playstation%203_1.html", consola: "PS3" },
             
             // PlayStation 4/5
-            { texto: "Juego PS4 - Spider-Man", url: "PLAYSTATION%204-5/playstation4_1.html", consola: "PS4/5" },
-            { texto: "Juego PS4 - God of War", url: "PLAYSTATION%204-5/playstation4_1.html", consola: "PS4/5" },
-            { texto: "Juego PS5 - Demon's Souls", url: "PLAYSTATION%204-5/playstation4_1.html", consola: "PS4/5" }
+            { texto: "Juego PS4 - Spider-Man", url: "/PLAYSTATION%204-5/playstation4_1.html", consola: "PS4/5" },
+            { texto: "Juego PS4 - God of War", url: "/PLAYSTATION%204-5/playstation4_1.html", consola: "PS4/5" },
+            { texto: "Juego PS5 - Demon's Souls", url: "/PLAYSTATION%204-5/playstation4_1.html", consola: "PS4/5" }
             // Agrega aquí todos tus productos manualmente
         ];
     }
