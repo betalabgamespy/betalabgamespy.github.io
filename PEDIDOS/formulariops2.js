@@ -183,127 +183,85 @@ function obtenerDatosJuego() {
     return { nombreJuego, precioJuego };
 }
 
-// Manejar envío del formulario
-document.getElementById('formPedidos').addEventListener('submit', function(e) {
-    e.preventDefault();
+// FUNCIÓN SIMPLE PARA ENVIAR A GMAIL
+function enviarAGmail(event) {
+    event.preventDefault();
     
+    // Obtener datos del formulario
+    const nombre = document.getElementById('nombre').value;
+    const apellido = document.getElementById('apellido').value;
+    const telefono = document.getElementById('telefono').value;
+    const email = document.getElementById('email').value;
+    const juegosPS2 = document.getElementById('juegosPS2').value;
+    const mensaje = document.getElementById('mensaje').value;
+    
+    // Obtener carrito
     const carrito = obtenerDatosCarrito();
     
+    // Crear mensaje para Gmail
+    let cuerpoMensaje = `NUEVO PEDIDO PS2 - BETALAB GAMES PY\n\n`;
+    cuerpoMensaje += `INFORMACIÓN DEL CLIENTE:\n`;
+    cuerpoMensaje += `Nombre: ${nombre} ${apellido}\n`;
+    cuerpoMensaje += `Email: ${email}\n`;
+    cuerpoMensaje += `Teléfono: ${telefono}\n`;
+    cuerpoMensaje += `Mensaje: ${mensaje || 'No especificado'}\n\n`;
+    
     if (carrito.length > 0) {
-        enviarCarrito(carrito);
+        // PEDIDO DESDE CARRITO
+        cuerpoMensaje += `🛒 PEDIDO DESDE CARRITO:\n`;
+        const total = calcularTotalCarrito(carrito);
+        const totalMostrar = formatearNumero(total);
+        
+        carrito.forEach((item, index) => {
+            let precioLimpio = item.precio ? item.precio.replace(/\s?Gs\s?/g, '') : '0';
+            precioLimpio = precioLimpio.replace('$', '').replace(/\./g, '');
+            const precioNumerico = parseFloat(precioLimpio.replace(/[^\d]/g, '')) || 0;
+            
+            cuerpoMensaje += `${index + 1}. ${item.nombre}\n`;
+            cuerpoMensaje += `   Cantidad: ${item.cantidad} x ${formatearNumero(precioNumerico)} Gs\n\n`;
+        });
+        
+        cuerpoMensaje += `💰 TOTAL: ${totalMostrar} Gs\n\n`;
     } else {
-        enviarFormularioIndividual();
-    }
-});
-
-// Función para enviar carrito múltiple
-function enviarCarrito(carrito) {
-    if (carrito.length === 0) {
-        alert('❌ El carrito está vacío');
-        return;
+        // PEDIDO INDIVIDUAL PS2
+        cuerpoMensaje += `🎮 PEDIDO PS2 INDIVIDUAL:\n`;
+        const { nombreJuego } = obtenerDatosJuego();
+        cuerpoMensaje += `Pendrive: ${nombreJuego}\n`;
+        cuerpoMensaje += `Juegos solicitados:\n${juegosPS2}\n\n`;
     }
     
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('mensajeExito').style.display = 'none';
+    cuerpoMensaje += `📅 Fecha: ${new Date().toLocaleString('es-PY')}\n`;
+    cuerpoMensaje += `🌐 Página: ${window.location.href}`;
     
-    const total = calcularTotalCarrito(carrito);
-    const totalMostrar = formatearNumero(total);
+    // Enviar por Gmail
+    const emailDestino = 'betalabgamespedidos@gmail.com'; // CAMBIA POR TU GMAIL
+    const asunto = carrito.length > 0 ? 
+        `🎮 PEDIDO CARRITO - ${nombre} ${apellido}` : 
+        `🎮 PEDIDO PS2 - ${nombre} ${apellido}`;
     
-    const formData = {
-        carrito: carrito,
-        total: totalMostrar,
-        nombre: document.getElementById('nombre').value,
-        apellido: document.getElementById('apellido').value,
-        telefono: document.getElementById('telefono').value,
-        email: document.getElementById('email').value,
-        mensaje: document.getElementById('mensaje').value,
-        fecha: new Date().toLocaleString(),
-        pagina: window.location.href
-    };
+    const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoMensaje)}`;
     
-    enviarSolicitudCarritoAGmail(formData);
+    // Mostrar mensaje de éxito
+    document.getElementById('mensajeExito').style.display = 'block';
+    
+    // Abrir cliente de correo
+    window.location.href = mailtoLink;
+    
+    // Vaciar carrito si era un pedido desde carrito
+    if (carrito.length > 0) {
+        setTimeout(() => {
+            sessionStorage.removeItem('carrito');
+        }, 1000);
+    }
 }
 
-// Función para enviar formulario individual
-function enviarFormularioIndividual() {
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('mensajeExito').style.display = 'none';
-    
-    const formData = {
-        nombreJuego: document.getElementById('nombreJuego').textContent,
-        nombre: document.getElementById('nombre').value,
-        apellido: document.getElementById('apellido').value,
-        telefono: document.getElementById('telefono').value,
-        email: document.getElementById('email').value,
-        juegosPS2: document.getElementById('juegosPS2').value,
-        mensaje: document.getElementById('mensaje').value,
-        fecha: new Date().toLocaleString(),
-        pagina: window.location.href
-    };
-    
-    enviarSolicitudIndividualAGmail(formData);
-}
-
-function enviarSolicitudCarritoAGmail(datos) {
-    const emailEmpresa = "betalabgamespedidos@gmail.com";
-    
-    let detalleCarrito = '';
-    datos.carrito.forEach((item) => {
-        let precioLimpio = item.precio ? item.precio.replace(/\s?Gs\s?/g, '') : '0';
-        precioLimpio = precioLimpio.replace('$', '').replace(/\./g, '');
-        const precioNumerico = parseFloat(precioLimpio.replace(/[^\d]/g, '')) || 0;
-        const subtotal = precioNumerico * item.cantidad;
-        
-        const precioMostrar = formatearNumero(precioNumerico);
-        const subtotalMostrar = formatearNumero(subtotal);
-        
-        detalleCarrito += `🎮 ${item.nombre}\n`;
-        detalleCarrito += `   • Precio: ${precioMostrar} Gs\n`;
-        detalleCarrito += `   • Cantidad: ${item.cantidad}\n`;
-        detalleCarrito += `   • Subtotal: ${subtotalMostrar} Gs\n\n`;
-    });
-    
-    const asunto = `🛒 Pedido de ${datos.carrito.length} juego(s) - Total: ${datos.total} Gs`;
-    const cuerpo = `...`; // Mantén tu cuerpo actual
-    
-    const mailtoLink = `mailto:${emailEmpresa}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-    
-    setTimeout(() => {
-        document.getElementById('loading').style.display = 'none';
-        window.location.href = mailtoLink;
-        document.getElementById('mensajeExito').style.display = 'block';
-        sessionStorage.removeItem('carrito');
-    }, 1500);
-}
-
-function enviarSolicitudIndividualAGmail(datos) {
-    const emailEmpresa = "betalabgamespedidos@gmail.com";
-    
-    const asunto = `Solicitud de Juego - ${datos.nombreJuego}`;
-    const cuerpo = `...`; // Mantén tu cuerpo actual
-    
-    const mailtoLink = `mailto:${emailEmpresa}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-    
-    setTimeout(() => {
-        document.getElementById('loading').style.display = 'none';
-        window.location.href = mailtoLink;
-        document.getElementById('mensajeExito').style.display = 'block';
-    }, 1500);
-}
-
-// Validación en tiempo real
-document.querySelectorAll('input, textarea').forEach(input => {
-    input.addEventListener('blur', function() {
-        if (this.required && !this.value) {
-            this.style.borderColor = '#e74c3c';
-        } else {
-            this.style.borderColor = '#2ecc71';
-        }
-    });
-    
-    input.addEventListener('focus', function() {
-        this.style.borderColor = '#667eea';
-    });
+// Conectar el formulario al enviar
+document.addEventListener('DOMContentLoaded', function() {
+    const formulario = document.getElementById('formPedidos');
+    if (formulario) {
+        formulario.addEventListener('submit', enviarAGmail);
+        console.log('✅ Formulario conectado para envío a Gmail');
+    }
 });
 
 // Hacer las funciones globales
@@ -311,4 +269,4 @@ window.vaciarCarrito = vaciarCarrito;
 window.obtenerDatosCarrito = obtenerDatosCarrito;
 window.mostrarResumenCarrito = mostrarResumenCarrito;
 
-console.log('✅ formulariops2.js cargado - SIN confirmación');
+console.log('✅ formulariops2.js cargado - ENVÍO A GMAIL CONFIGURADO');
