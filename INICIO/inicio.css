@@ -687,7 +687,7 @@ body {
     text-align: center;
     width: 100%;            /* Ancho completo del contenedor */
     max-width: 500px; 
-    height: 200px;
+    height: auto;           /* ← QUITA el height fijo */
     aspect-ratio: 1 / 1;    /* Relación 1:1 = cuadrado perfecto */
     background-image: url(https://i.pinimg.com/1200x/5b/64/d4/5b64d490ece1575949c2b358d57739a0.jpg);
     background-size: cover;
@@ -698,7 +698,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box; /* ← AÑADE ESTA LÍNEA */
+    box-sizing: border-box;
 }
 .btn-pag{
     width: 150px;
@@ -715,6 +715,7 @@ body {
     transition: 1s;
     transform: scale(1,1);
 }
+
 
 
 
