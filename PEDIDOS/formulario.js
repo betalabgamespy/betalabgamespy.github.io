@@ -140,63 +140,48 @@ function calcularTotalCarrito(carrito) {
     return total;
 }
 
-// FUNCIÓN PARA ENVIAR A GMAIL - SIMPLE Y DIRECTO
-function enviarPedidoGmail(event) {
+// FUNCIÓN SIMPLE PARA ENVIAR A GMAIL
+function enviarAGmail(event) {
     event.preventDefault();
-    
-    // Verificar que el carrito no esté vacío
-    const carrito = obtenerDatosCarrito();
-    if (carrito.length === 0) {
-        alert('❌ El carrito está vacío');
-        return;
-    }
     
     // Obtener datos del formulario
     const nombre = document.getElementById('nombre').value;
     const apellido = document.getElementById('apellido').value;
-    const email = document.getElementById('email').value;
     const telefono = document.getElementById('telefono').value;
+    const email = document.getElementById('email').value;
     const mensaje = document.getElementById('mensaje').value;
     
-    // Validar campos requeridos
-    if (!nombre || !apellido || !email || !telefono) {
-        alert('❌ Completa todos los campos requeridos');
-        return;
-    }
-    
-    // Calcular total
+    // Obtener carrito
+    const carrito = obtenerDatosCarrito();
     const total = calcularTotalCarrito(carrito);
     const totalFormateado = formatearNumeroConCeros(total) + ' Gs';
     
-    // Crear contenido del correo
-    let contenido = `NUEVO PEDIDO - BETALAB GAMES PY\n\n`;
-    contenido += `INFORMACIÓN DEL CLIENTE:\n`;
-    contenido += `Nombre: ${nombre} ${apellido}\n`;
-    contenido += `Email: ${email}\n`;
-    contenido += `Teléfono: ${telefono}\n`;
-    contenido += `Mensaje: ${mensaje || 'No especificado'}\n\n`;
+    // Crear mensaje para Gmail
+    let cuerpoMensaje = `NUEVO PEDIDO - BETALAB GAMES PY\n\n`;
+    cuerpoMensaje += `INFORMACIÓN DEL CLIENTE:\n`;
+    cuerpoMensaje += `Nombre: ${nombre} ${apellido}\n`;
+    cuerpoMensaje += `Email: ${email}\n`;
+    cuerpoMensaje += `Teléfono: ${telefono}\n`;
+    cuerpoMensaje += `Mensaje: ${mensaje || 'No especificado'}\n\n`;
     
-    contenido += `PEDIDO:\n`;
+    cuerpoMensaje += `DETALLES DEL PEDIDO:\n`;
     carrito.forEach((item, index) => {
         const precios = calcularPrecios(item);
-        contenido += `${index + 1}. ${item.nombre} - ${item.cantidad} x ${precios.precioMostrar}\n`;
+        cuerpoMensaje += `${index + 1}. ${item.nombre}\n`;
+        cuerpoMensaje += `   Cantidad: ${item.cantidad} x ${precios.precioMostrar}\n`;
+        cuerpoMensaje += `   Subtotal: ${precios.subtotalMostrar}\n\n`;
     });
     
-    contenido += `\nTOTAL: ${totalFormateado}\n`;
-    contenido += `Fecha: ${new Date().toLocaleString('es-PY')}`;
+    cuerpoMensaje += `TOTAL: ${totalFormateado}\n\n`;
+    cuerpoMensaje += `Fecha: ${new Date().toLocaleString('es-PY')}`;
     
     // Enviar por Gmail
-    const emailDestino = 'betalabgamespedidos@gmail.com'; // CAMBIA POR TU GMAIL
-    const asunto = `Pedido de ${nombre} ${apellido}`;
-    const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(contenido)}`;
+    const emailDestino = 'betalabgamespy@gmail.com'; // CAMBIA POR TU GMAIL
+    const asunto = `🎮 PEDIDO - ${nombre} ${apellido}`;
+    const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoMensaje)}`;
     
     // Abrir cliente de correo
     window.location.href = mailtoLink;
-    
-    // Mensaje de confirmación
-    setTimeout(() => {
-        alert('✅ Se abrió tu correo. Envía el mensaje para completar el pedido.');
-    }, 1000);
 }
 
 // Al cargar la página
@@ -214,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Agregar event listener al formulario
     const formulario = document.getElementById('formPedidos');
     if (formulario) {
-        formulario.addEventListener('submit', enviarPedidoGmail);
+        formulario.addEventListener('submit', enviarAGmail);
     }
 });
 
@@ -227,4 +212,8 @@ function actualizarMontoTransferencia(precio) {
 
 // Hacer funciones globales
 window.vaciarCarrito = vaciarCarrito;
+
+// Hacer funciones globales
+window.vaciarCarrito = vaciarCarrito;
 window.enviarPedidoGmail = enviarPedidoGmail;
+
