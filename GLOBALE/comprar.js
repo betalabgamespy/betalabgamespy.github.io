@@ -258,14 +258,14 @@ function redirigirAFormularioCorrecto() {
     const nombreArchivo = urlActual.split('/').pop().toLowerCase();
     console.log('📄 Archivo actual:', nombreArchivo);
     
-    let formularioDestino = '../PEDIDOS/pedidos.html'; // Por defecto
+    let formularioDestino = 'PEDIDOS/pedidos.html'; // Por defecto
     
     // Detectar si estamos en una página de PS2
     if (nombreArchivo.includes('ps2') || 
         nombreArchivo.includes('playstation2') ||
         urlActual.includes('PLAYSTATION%202') ||
         urlActual.includes('PLAYSTATION 2')) {
-        formularioDestino = '../PEDIDOS/pedidosps2.html';
+        formularioDestino = 'PEDIDOS/pedidosps2.html';
         console.log('🎯 Detectada página PS2 -> Formulario PS2');
     }
     // Detectar si estamos en una página de PS3, PS4, PS5
@@ -273,7 +273,7 @@ function redirigirAFormularioCorrecto() {
              nombreArchivo.includes('playstation3') || nombreArchivo.includes('playstation4') || nombreArchivo.includes('playstation5') ||
              urlActual.includes('PLAYSTATION%204-5') ||
              urlActual.includes('PLAYSTATION 4-5')) {
-        formularioDestino = '../PEDIDOS/pedidos.html';
+        formularioDestino = 'PEDIDOS/pedidos.html';
         console.log('🎯 Detectada página PS3/PS4/PS5 -> Formulario normal');
     }
     
