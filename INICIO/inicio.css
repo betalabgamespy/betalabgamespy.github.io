@@ -376,11 +376,12 @@ body {
     font-weight: bold;
 }
 
-/* ===== BOTÓN FLOTANTE DEL CARRITO ===== */
+/* ===== BOTÓN FLOTANTE DEL CARRITO (A LA DERECHA) ===== */
 .carrito-flotante {
     position: fixed;
     bottom: 100px;
-    left: 30px;
+    right: 30px;
+    left: auto;
     z-index: 1000;
 }
 
@@ -426,7 +427,8 @@ body {
 .mini-carrito-flotante {
     position: absolute;
     bottom: 80px;
-    left: 0;
+    right: 0;
+    left: auto;
     width: 300px;
     background: white;
     border-radius: 15px;
@@ -537,11 +539,12 @@ body {
     font-style: italic;
 }
 
-/* ===== BOTÓN FLOTANTE DE CONTACTO ===== */
+/* ===== BOTÓN FLOTANTE DE CONTACTO (A LA DERECHA) ===== */
 .floating-contact-tooltip {
     position: fixed;
     bottom: 30px;
-    left: 30px;
+    right: 30px;
+    left: auto;
     z-index: 1000;
 }
 
@@ -564,7 +567,8 @@ body {
 .contact-tooltip-menu {
     position: absolute;
     bottom: 70px;
-    left: 0;
+    right: 0;
+    left: auto;
     background: white;
     border-radius: 15px;
     padding: 15px;
@@ -594,13 +598,13 @@ body {
 
 .tooltip-item:hover {
     background: #f8f9fa;
-    transform: translateX(5px);
+    transform: translateX(-5px);
 }
 
 .tooltip-item:hover .tooltip {
     opacity: 1;
     visibility: visible;
-    transform: translateX(10px);
+    transform: translateX(-10px);
 }
 
 .tooltip-icon {
@@ -618,8 +622,8 @@ body {
 
 .tooltip {
     position: absolute;
-    right: -150px;
-    left: auto;
+    left: -150px;
+    right: auto;
     background: #333;
     color: white;
     padding: 8px 12px;
@@ -635,11 +639,11 @@ body {
 .tooltip::after {
     content: '';
     position: absolute;
-    left: -5px;
-    right: auto;
+    right: -5px;
+    left: auto;
     top: 50%;
     transform: translateY(-50%);
-    border-right: 5px solid #333;
+    border-left: 5px solid #333;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
 }
@@ -734,12 +738,12 @@ body {
     
     .carrito-flotante {
         bottom: 90px;
-        left: 20px;
+        right: 20px;
     }
     
     .floating-contact-tooltip {
         bottom: 20px;
-        left: 20px;
+        right: 20px;
     }
     
     .btn-carrito-flotante {
@@ -756,7 +760,7 @@ body {
     
     .mini-carrito-flotante {
         width: 280px;
-        left: -10px;
+        right: -10px;
         bottom: 70px;
     }
     
@@ -768,6 +772,7 @@ body {
     
     .contact-tooltip-menu {
         bottom: 65px;
+        right: 0;
     }
     
     .paginacion {
@@ -781,6 +786,10 @@ body {
     
     .boton-siguiente {
         padding: 8px 15px;
+    }
+    
+    .tooltip-item:hover {
+        transform: translateX(-3px);
     }
 }
 
@@ -798,5 +807,15 @@ body {
     .juegos-top, .seccion-juegos {
         flex-direction: column;
         align-items: center;
+    }
+    
+    .carrito-flotante {
+        right: 15px;
+        bottom: 80px;
+    }
+    
+    .floating-contact-tooltip {
+        right: 15px;
+        bottom: 15px;
     }
 }
