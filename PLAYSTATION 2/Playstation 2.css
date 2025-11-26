@@ -473,7 +473,6 @@ body {
 .mas-vendidos{
     text-align: center;
     color: lightblue;
-    text-shadow: 0 0 8px rgba(0, 102, 255, 0.5);
     margin: 20px 0 0;
     font-size: 18px;
 }
@@ -630,3 +629,4 @@ body {
         gap: 10px;
     }
 }
+
