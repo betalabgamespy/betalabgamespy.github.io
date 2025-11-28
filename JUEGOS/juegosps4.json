@@ -1,0 +1,18 @@
+{
+    "juegosps4": [
+        {
+            "id": 1,
+            "nombre": "FC 26 para PS4-PS5",
+            "precio": "320.000 ",
+            "precio_antiguo": "500.000 Gs",
+            "imagen": "https://i.pinimg.com/1200x/32/06/dd/3206dd46cb3cb8b2b8377119d199ed08.jpg"
+        },
+        {
+            "id": 2,
+            "nombre": "Silent Hill 2 PS5",
+            "precio": "340.000 ",
+            "precio_antiguo": "560.000 Gs",
+            "imagen": "https://i.pinimg.com/736x/90/22/15/90221580fd1f86d5659085ce35c77ce9.jpg"
+        }
+    ]
+}
