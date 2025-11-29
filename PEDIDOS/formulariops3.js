@@ -151,8 +151,21 @@ function enviarAGmail(event) {
     const email = document.getElementById('email').value;
     const mensaje = document.getElementById('mensaje').value;
     
+    // Validar campos obligatorios
+    if (!nombre || !apellido || !telefono || !email) {
+        alert('❌ Por favor, completa todos los campos obligatorios: Nombre, Apellido, Teléfono y Email');
+        return;
+    }
+    
     // Obtener carrito
     const carrito = obtenerDatosCarrito();
+    
+    // Validar que el carrito no esté vacío
+    if (carrito.length === 0) {
+        alert('❌ El carrito está vacío. Agrega al menos un juego antes de enviar el pedido.');
+        return;
+    }
+    
     const total = calcularTotalCarrito(carrito);
     const totalFormateado = formatearNumeroConCeros(total) + ' Gs';
     
@@ -181,8 +194,8 @@ function enviarAGmail(event) {
     const asunto = `🎮 PEDIDO - ${nombre} ${apellido}`;
     const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoMensaje)}`;
     
-    // Mostrar alerta con instrucciones claras - ESTO SE EJECUTA CADA VEZ
-    alert(`📧 SE ABRIRÁ GMAIL\n\n📎 INSTRUCCIONES IMPORTANTES:\n\n1. Se abrirá Gmail automáticamente\n2. Revisa que todos los datos estén correctos\n3. \n✅ Te estaremos contactando en el transcurso del día`);
+    // Mostrar alerta con instrucciones claras - CORREGIDO
+    alert(`📧 SE ABRIRÁ GMAIL\n\n📎 INSTRUCCIONES IMPORTANTES:\n\n1. Se abrirá Gmail automáticamente\n2. Revisa que todos los datos estén correctos\n3. Presiona ENVIAR para completar tu pedido\n\n✅ Te estaremos contactando en el transcurso del día`);
     
     // Abrir cliente de correo
     window.location.href = mailtoLink;
