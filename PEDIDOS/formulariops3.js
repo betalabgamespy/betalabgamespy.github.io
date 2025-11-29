@@ -151,8 +151,21 @@ function enviarAGmailPS3(event) {
     const email = document.getElementById('email').value;
     const mensaje = document.getElementById('mensaje').value;
     
+    // Validar campos obligatorios
+    if (!nombre || !apellido || !telefono || !email) {
+        alert('❌ Por favor completa todos los campos obligatorios');
+        return;
+    }
+    
     // Obtener carrito
     const carrito = obtenerDatosCarrito();
+    
+    // Verificar si el carrito está vacío
+    if (!carrito || carrito.length === 0) {
+        alert('❌ El carrito está vacío. Agrega juegos antes de enviar el pedido.');
+        return;
+    }
+    
     const total = calcularTotalCarrito(carrito);
     const totalFormateado = formatearNumeroConCeros(total) + ' Gs';
     
@@ -211,4 +224,3 @@ function actualizarMontoTransferencia(precio) {
 // Hacer funciones globales
 window.vaciarCarrito = vaciarCarrito;
 window.enviarAGmailPS3 = enviarAGmailPS3;
-
