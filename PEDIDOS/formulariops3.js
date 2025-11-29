@@ -141,6 +141,7 @@ function calcularTotalCarrito(carrito) {
 }
 
 // FUNCIÓN SIMPLE PARA ENVIAR A GMAIL
+// FUNCIÓN SIMPLE PARA ENVIAR A GMAIL
 function enviarAGmail(event) {
     event.preventDefault();
     
@@ -194,7 +195,7 @@ function enviarAGmail(event) {
     const asunto = `🎮 PEDIDO - ${nombre} ${apellido}`;
     const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoMensaje)}`;
     
-    // Mostrar alerta con instrucciones claras - CORREGIDO
+    // MOSTRAR ALERT ORIGINAL - no modal personalizado
     alert(`📧 SE ABRIRÁ GMAIL\n\n📎 INSTRUCCIONES IMPORTANTES:\n\n1. Se abrirá Gmail automáticamente\n2. Revisa que todos los datos estén correctos\n3. Presiona ENVIAR para completar tu pedido\n\n✅ Te estaremos contactando en el transcurso del día`);
     
     // Abrir cliente de correo
@@ -230,3 +231,4 @@ function actualizarMontoTransferencia(precio) {
 // Hacer funciones globales
 window.vaciarCarrito = vaciarCarrito;
 window.enviarAGmail = enviarAGmail;
+
