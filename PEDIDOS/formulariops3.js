@@ -140,30 +140,72 @@ function calcularTotalCarrito(carrito) {
     return total;
 }
 
+// FUNCIÓN DE PRUEBA PARA VERIFICAR
+function probarFormulario() {
+    console.log("🔍 PROBANDO FORMULARIO...");
+    
+    // Verificar si los elementos del formulario existen
+    const nombre = document.getElementById('nombre');
+    const apellido = document.getElementById('apellido');
+    const telefono = document.getElementById('telefono');
+    const email = document.getElementById('email');
+    
+    console.log("Elementos del formulario:", {
+        nombre: nombre,
+        apellido: apellido,
+        telefono: telefono,
+        email: email
+    });
+    
+    // Verificar carrito
+    const carrito = obtenerDatosCarrito();
+    console.log("Carrito actual:", carrito);
+    
+    alert("✅ Función de prueba ejecutada - Revisa la consola (F12)");
+}
+
 // FUNCIÓN SIMPLE PARA ENVIAR A GMAIL (PARA PS3)
 function enviarAGmailPS3(event) {
-    event.preventDefault();
+    if (event) {
+        event.preventDefault();
+    }
+    
+    console.log("🎯 FUNCIÓN enviarAGmailPS3 EJECUTADA");
     
     // Obtener datos del formulario
-    const nombre = document.getElementById('nombre').value;
-    const apellido = document.getElementById('apellido').value;
-    const telefono = document.getElementById('telefono').value;
-    const email = document.getElementById('email').value;
-    const mensaje = document.getElementById('mensaje').value;
+    const nombre = document.getElementById('nombre');
+    const apellido = document.getElementById('apellido');
+    const telefono = document.getElementById('telefono');
+    const email = document.getElementById('email');
+    const mensaje = document.getElementById('mensaje');
+    
+    // Verificar si los elementos existen
+    if (!nombre || !apellido || !telefono || !email) {
+        alert('❌ Error: No se encontraron los campos del formulario');
+        console.error("Elementos no encontrados:", {nombre, apellido, telefono, email});
+        return false;
+    }
+    
+    const nombreValor = nombre.value;
+    const apellidoValor = apellido.value;
+    const telefonoValor = telefono.value;
+    const emailValor = email.value;
+    const mensajeValor = mensaje ? mensaje.value : '';
     
     // Validar campos obligatorios
-    if (!nombre || !apellido || !telefono || !email) {
+    if (!nombreValor || !apellidoValor || !telefonoValor || !emailValor) {
         alert('❌ Por favor completa todos los campos obligatorios');
-        return;
+        return false;
     }
     
     // Obtener carrito
     const carrito = obtenerDatosCarrito();
+    console.log("Carrito obtenido:", carrito);
     
     // Verificar si el carrito está vacío
     if (!carrito || carrito.length === 0) {
         alert('❌ El carrito está vacío. Agrega juegos antes de enviar el pedido.');
-        return;
+        return false;
     }
     
     const total = calcularTotalCarrito(carrito);
@@ -172,10 +214,10 @@ function enviarAGmailPS3(event) {
     // Crear mensaje para Gmail
     let cuerpoMensaje = `NUEVO PEDIDO PS3 - BETALAB GAMES PY\n\n`;
     cuerpoMensaje += `INFORMACIÓN DEL CLIENTE:\n`;
-    cuerpoMensaje += `Nombre: ${nombre} ${apellido}\n`;
-    cuerpoMensaje += `Email: ${email}\n`;
-    cuerpoMensaje += `Teléfono: ${telefono}\n`;
-    cuerpoMensaje += `Mensaje: ${mensaje || 'No especificado'}\n\n`;
+    cuerpoMensaje += `Nombre: ${nombreValor} ${apellidoValor}\n`;
+    cuerpoMensaje += `Email: ${emailValor}\n`;
+    cuerpoMensaje += `Teléfono: ${telefonoValor}\n`;
+    cuerpoMensaje += `Mensaje: ${mensajeValor || 'No especificado'}\n\n`;
     
     cuerpoMensaje += `DETALLES DEL PEDIDO:\n`;
     carrito.forEach((item, index) => {
@@ -191,7 +233,7 @@ function enviarAGmailPS3(event) {
 
     // Enviar por Gmail
     const emailDestino = 'betalabgamespedidos@gmail.com';
-    const asunto = `🎮 PEDIDO PS3 - ${nombre} ${apellido}`;
+    const asunto = `🎮 PEDIDO PS3 - ${nombreValor} ${apellidoValor}`;
     const mailtoLink = `mailto:${emailDestino}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoMensaje)}`;
     
     // Mostrar alerta con instrucciones claras
@@ -199,12 +241,17 @@ function enviarAGmailPS3(event) {
     
     // Abrir cliente de correo
     window.location.href = mailtoLink;
+    
+    return false;
 }
 
 // Al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 Página cargada - Carrito PS3");
+    
     // Obtener carrito
     carrito = obtenerDatosCarrito();
+    console.log("Carrito al cargar:", carrito);
     
     // Mostrar resumen
     mostrarResumenCarrito(carrito);
@@ -224,3 +271,5 @@ function actualizarMontoTransferencia(precio) {
 // Hacer funciones globales
 window.vaciarCarrito = vaciarCarrito;
 window.enviarAGmailPS3 = enviarAGmailPS3;
+window.probarFormulario = probarFormulario;
+
