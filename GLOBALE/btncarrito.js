@@ -80,18 +80,36 @@ function actualizarMiniCarrito() {
     contenido.innerHTML = html;
 }
 
-// Función para ir al carrito completo - DETECCIÓN AUTOMÁTICA
+// Función para ir al carrito completo - SIN PS3
 function irAlCarrito() {
-    const currentPage = window.location.pathname;
+    const currentUrl = window.location.href;
     
-    // Si estamos en una página de PS2, ir al formulario de PS2
-    if (currentPage.includes('ps2') || currentPage.includes('PS2') || 
-        currentPage.includes('playstation') || currentPage.includes('PlayStation')) {
+    console.log('🔍 URL actual:', currentUrl);
+    
+    // Detectar PS2
+    if (currentUrl.includes('PLAYSTATION 2') || 
+        currentUrl.includes('playstation%202') ||
+        currentUrl.includes('/PLAYSTATION%202/')) {
+        
+        console.log('🎮 Detectada página PS2, redirigiendo a pedidosps2.html');
         window.location.href = '/PEDIDOS/pedidosps2.html';
+        return;
     } 
-    // Si estamos en la página principal o otras páginas, ir al formulario general
-    else {
+    // Detectar PS4/PS5
+    else if (currentUrl.includes('PLAYSTATION 4') || 
+             currentUrl.includes('PLAYSTATION 5') ||
+             currentUrl.includes('playstation%204') ||
+             currentUrl.includes('playstation%205')) {
+        
+        console.log('🎮 Detectada página PS4/PS5, redirigiendo a pedidos.html');
         window.location.href = '/PEDIDOS/pedidos.html';
+        return;
+    }
+    // Página general
+    else {
+        console.log('🌐 Página general, redirigiendo a pedidos.html');
+        window.location.href = '/PEDIDOS/pedidos.html';
+        return;
     }
 }
 
@@ -108,7 +126,7 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Actualizar contador cuando se añade un producto
+// Función para añadir producto al carrito
 function añadirAlCarrito(nombreJuego) {
     console.log('🛒 Añadiendo al carrito:', nombreJuego);
     
@@ -147,20 +165,43 @@ function añadirAlCarrito(nombreJuego) {
     // Actualizar contador del carrito flotante
     actualizarContadorCarrito();
     
-    // Mostrar confirmación
-    mostrarConfirmacionCarrito(nombreJuego);
-    
     console.log('✅ Producto añadido. Carrito actual:', carrito);
 }
 
 // Inicializar contador al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏠 Página de inicio cargada');
+function inicializarCarrito() {
+    console.log('🏠 Inicializando carrito...');
     actualizarContadorCarrito();
-});
+    
+    // Agregar event listener al botón de ver carrito completo
+    const btnVerCarrito = document.querySelector('.btn-ver-carrito-completo');
+    if (btnVerCarrito) {
+        // Remover event listeners existentes para evitar duplicados
+        btnVerCarrito.replaceWith(btnVerCarrito.cloneNode(true));
+        
+        // Agregar nuevo event listener
+        document.querySelector('.btn-ver-carrito-completo').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🔄 Botón Ver Carrito clickeado');
+            irAlCarrito();
+        });
+        console.log('✅ Event listener agregado al botón Ver Carrito');
+    } else {
+        console.log('❌ No se encontró el botón Ver Carrito');
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarCarrito);
+} else {
+    inicializarCarrito();
+}
 
 // Hacer funciones globales
 window.añadirAlCarrito = añadirAlCarrito;
 window.toggleCarritoFlotante = toggleCarritoFlotante;
 window.irAlCarrito = irAlCarrito;
 window.actualizarContadorCarrito = actualizarContadorCarrito;
+
+console.log('✅ btncarrito.js cargado correctamente (SIN PS3)');
